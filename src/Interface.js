@@ -5,11 +5,14 @@ class Interface {
     constructor() {
         this.blessed = blessed;
         this.screen = blessed.screen();
+        this.init();
+    }
 
-        this.gameOverBox = this.createGameBox();
-
+    init() {
+        if (this.gameBox) {
+            this.gameBox.detach();
+        }
         this.gameBox = this.createGameBox();
-
         this.tails = this.createTails();
     }
 
@@ -70,22 +73,27 @@ class Interface {
         });
     }
 
-    createGameOverBox() {
+    createGameOverBox(content, color) {
         return {
             parent: this.screen,
-            top: 1,
-            left: 0,
-            width: '100%',
-            height: '100%-1',
-            content: `text`,
+            top: 'center',
+            left: 'center',
+            width: 40,
+            height: 12,
+            tags: true,
+            valign: 'middle',
+            content: content,
             border: {
-                type: 'line',
+              type: 'line',
             },
             style: {
+              fg: 'black',
+              bg: color,
+              border: {
                 fg: 'black',
-                bg: 'black',
-            }
-        };
+              },
+            },
+          };
       }
 
     bindHandlers(keyPressHandler, quitHandler, enterHandler) {
@@ -95,10 +103,12 @@ class Interface {
     }
 
     gameOverScreen(winner) {
-        // const content = `{center}User ${winner ? 'One': 'Two'} won!!!\n\nPress enter to try again{/center}`;
-        // const gameOverBox = this.createGameBox(content);
-        this.gameBox = this.blessed.box(this.gameOverBox);
-        this.render();
+        this.gameBox.detach();
+        const content = `{center}User ${winner ? 'Two' : 'One'} won!!!\n\nPress "R" to restart{/center}`;
+        const color = winner ?  'yellow' : 'cyan';
+        const gameOverBox = this.createGameOverBox(content, color);
+        this.gameBox = this.blessed.box(gameOverBox);
+
       }
 
     render() {

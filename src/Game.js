@@ -49,15 +49,17 @@ class Pointer {
 class Game {
     constructor(ui) {
         this.ui = ui;
-        this.gomocu = new Gomocu();
         this.pointer = new Pointer();
-    
         this.ui.bindHandlers(
-          this.mowPointer.bind(this),
-          this.quit.bind(this),
-          this.select.bind(this)
+            this.mowPointer.bind(this),
+            this.quit.bind(this),
+            this.select.bind(this)
         )
+        this.init();
+      }
 
+      init() {
+        this.gomocu = new Gomocu();
         this.render();
       }
 
@@ -78,6 +80,11 @@ class Game {
           this.pointer.moveRight();
           this.render();
         }
+
+        if (this.gomocu.gameOver && key.name === 'r') {
+            this.ui.init();
+            this.init();
+        }
     }
 
     select() {
@@ -86,7 +93,8 @@ class Game {
             return;
         }
         if(this.gomocu.gameOver) {
-            this.ui.gameOverScreen(this.gomocu.getCurrentPlayer())
+            const binaryPlayerNotation = this.gomocu.getCurrentPlayer() === this.gomocu.firstPlayer ? 0 : 1;
+            this.ui.gameOverScreen(binaryPlayerNotation);
         }
         this.render();
     }
